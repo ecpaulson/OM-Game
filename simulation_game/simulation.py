@@ -25,8 +25,6 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
         reserve_prices = rn.exponential(price_scale, size=num_buyers)
         reserve_prices = np.append(reserve_prices, -100.)
         # the team assigned with -100 means that this team should act as a seller in this round
-        temp = -np.sort(-reserve_prices)
-        SW_UB = np.sum(temp[:min(x_0, num_buyers)])
 
         ##############
         ## Dynamics ##
@@ -63,9 +61,9 @@ def simulate(teams, horizon, x_0, num_trials, price_scale):
                     b_t[rn.choice(buyer_indices, x_t, replace=False)] = 1
                 b_h += b_t
 
-                revenue_sample[trial, n] += p_t * np.sum(b_t) / SW_UB
+                revenue_sample[trial, n] += p_t * np.sum(b_t)
                 b_t_1 = b_t
-                cs_sample[trial, :] += np.multiply(b_t, (reserve_price_n - p_t)/sum(reserve_prices[:num_buyers]))
+                cs_sample[trial, :] += np.multiply(b_t, reserve_price_n - p_t)
                 x_t -= sum(b_t)
                 x_h_t = np.append(x_h_t, x_t)
 
